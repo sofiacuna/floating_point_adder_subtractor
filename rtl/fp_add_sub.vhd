@@ -197,11 +197,18 @@ begin
     
     ez_not_sat <= resize(ez_p, NE+1) - resize(to_signed(shift, NE+1), NE+1);
 
-    ez <= ez_not_sat(NE-1 downto 0) +1;
+    ez <= ey when (fx = (fx'range => '0') and ex = (ex'range => '0')) else
+          ex when (fy = (fy'range => '0') and ey = (ey'range => '0')) else
+          ez_not_sat(NE-1 downto 0) +1;
              
-    sz <= sum_m_ext(2**NE + NF);
+    sz <= sy when fx = (fx'range => '0') and ex = (ex'range => '0') and sum_sub_reg = '0' else
+          not(sy) when fx = (fx'range => '0') and ex = (ex'range => '0') and sum_sub_reg = '1' else
+          sx when fy = (fy'range => '0') and ey = (fx'range => '0') else
+          sum_m_ext(2**NE + NF);
          
-    fz <= std_logic_vector(fz_p);
+    fz <= fy when (fx = (fx'range => '0') and ex = (ex'range => '0')) else
+          fx when  (fy = (fy'range => '0') and ey = (fx'range => '0')) else
+          std_logic_vector(fz_p);
              
     process(clk,rst)
     begin
